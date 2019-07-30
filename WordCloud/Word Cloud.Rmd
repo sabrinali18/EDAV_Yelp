@@ -1,0 +1,147 @@
+---
+title: "EDAV Final Project - WordCloud"
+author: "Sabrina Li"
+date: "11/17/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library("tm")
+library("SnowballC")
+library("wordcloud")
+library("RColorBrewer")
+library("ggplot2")
+```
+
+#word could - star 1
+##Read Data
+
+```{r}
+#save the reviews for different stars in txt files
+review1 <- readLines(file.choose())
+corpus1 <- Corpus(VectorSource(review1))
+#inspect(corpus1)
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+corpus1 <- tm_map(corpus1, toSpace, "/")
+corpus1 <- tm_map(corpus1, toSpace, "@")
+corpus1 <- tm_map(corpus1, toSpace, "\\|")
+###clean the text
+# Convert the text to lower case
+corpus1 <- tm_map(corpus1, content_transformer(tolower))
+# Remove numbers
+corpus1 <- tm_map(corpus1, removeNumbers)
+# Remove english common stopwords
+corpus1 <- tm_map(corpus1, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your stopwords as a character vector
+corpus1 <- tm_map(corpus1, removeWords, c("get", "just", "like", "said", "will", "got", "went", "came" ,"can"))
+# Remove punctuations
+corpus1 <- tm_map(corpus1, removePunctuation)
+# Eliminate extra white spaces
+corpus1 <- tm_map(corpus1, stripWhitespace)
+# Text stemming
+# docs <- tm_map(docs, stemDocument)
+writeLines(as.character(corpus1[1]))
+index <- sample.int(1825294, 10000)
+corpus1_small <- corpus1[index]
+dtm1 <- DocumentTermMatrix(corpus1_small)
+dtm1
+freq1 <- colSums(as.matrix(dtm1))
+ord1 <- order(freq1)
+dtms1 <- removeSparseTerms(dtm1, 0.8)
+dtms1
+head(table(freq1), 20)
+freq1 <- sort(freq1, decreasing=TRUE)
+head(freq1, 150)
+findFreqTerms(dtm1, lowfreq=300)
+star1_df <- data.frame(word=names(freq1), freq=freq1)
+head(star1_df, 10)
+ggplot(subset(star1_df, freq>800), aes(x = reorder(word, -freq), y = freq)) +
+geom_bar(stat = "identity") +
+theme(axis.text.x=element_text(angle=45, hjust=1))
+barplot(star1_df[1:25,]$freq, las = 2, names.arg = star1_df[1:25,]$word,
+col ="lightblue", main ="Most frequent words",
+ylab = "Word frequencies")
+findAssocs(dtm1, "service", corlimit=0.2)
+```
+
+
+##Wordcloud
+
+```{r}
+set.seed(5702)
+png("wordcloud_star1.png", width=1280,height=800)
+wordcloud(star1_df$word,star1_df$freq, scale=c(8,.3),min.freq=2,max.words=150, random.order=F, rot.per=.15, colors=brewer.pal(8, "Dark2"))
+dev.off()
+#wordcloud(words = star1_df$word, freq = star1_df$freq, min.freq = 1,
+#          max.words=50, random.order=FALSE, rot.per=0.35, 
+#          colors=brewer.pal(8, "Dark2"))
+
+
+```
+
+##word cloud - star 5
+
+##Read Data
+
+```{r}
+#save the reviews for different stars in txt files
+review5 <- readLines(file.choose())
+corpus5 <- Corpus(VectorSource(review5))
+#inspect(corpus1)
+toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+corpus5 <- tm_map(corpus5, toSpace, "/")
+corpus5 <- tm_map(corpus5, toSpace, "@")
+corpus5 <- tm_map(corpus5, toSpace, "\\|")
+###clean the text
+# Convert the text to lower case
+corpus5 <- tm_map(corpus5, content_transformer(tolower))
+# Remove numbers
+corpus5 <- tm_map(corpus5, removeNumbers)
+# Remove english common stopwords
+corpus5 <- tm_map(corpus5, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your stopwords as a character vector
+corpus5 <- tm_map(corpus5, removeWords, c("get", "just", "like", "said", "will", "got", "went", "came" ,"can"))
+# Remove punctuations
+corpus5 <- tm_map(corpus5, removePunctuation)
+# Eliminate extra white spaces
+corpus5 <- tm_map(corpus5, stripWhitespace)
+# Text stemming
+# docs <- tm_map(docs, stemDocument)
+writeLines(as.character(corpus5[1]))
+index <- sample.int(1825294, 10000)
+corpus5_small <- corpus5[index]
+dtm5 <- DocumentTermMatrix(corpus5_small)
+dtm5
+freq5 <- colSums(as.matrix(dtm5))
+ord5 <- order(freq5)
+
+head(table(freq5), 20)
+freq5 <- sort(freq5, decreasing=TRUE)
+head(freq5, 150)
+findFreqTerms(dtm5, lowfreq=300)
+star5_df <- data.frame(word=names(freq5), freq=freq5)
+head(star5_df, 10)
+ggplot(subset(star5_df, freq>800), aes(x = reorder(word, -freq), y = freq)) +
+geom_bar(stat = "identity") +
+theme(axis.text.x=element_text(angle=45, hjust=1))
+barplot(star5_df[1:25,]$freq, las = 2, names.arg = star5_df[1:25,]$word,
+col ="lightblue", main ="Most frequent words",
+ylab = "Word frequencies")
+findAssocs(dtm5, "service", corlimit=0.2)
+```
+
+
+##Wordcloud
+
+```{r}
+set.seed(5702)
+png("wordcloud_star5.png", width=1280,height=800)
+wordcloud(star5_df$word,star5_df$freq, scale=c(8,.3),min.freq=2,max.words=150, random.order=F, rot.per=.15, colors=brewer.pal(8, "Dark2"))
+dev.off()
+
+
+```
