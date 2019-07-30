@@ -10,6 +10,6 @@ Yelp has become a great helper in our daily life, as people are searching for re
 A complete dataset provided by Yelp can be found via this link: https://www.yelp.com/dataset/challenge.
 
 ### Files
-  - Data Preprocessing
-  - EDAV code in R
-  - Code for word cloud in RShiny
+  - Yelp_Data_Preprocessing.py: Read and preprocess data from Yelp
+  - EDAV Final Project Report.Rmd: R Markdown file for exploratory data visualization.
+  - WordCloud: Code and dataset for Rshiny app of [Yelp review word cloud](https://sabrinali18.shinyapps.io/WordCloud/).
